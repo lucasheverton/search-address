@@ -1,10 +1,26 @@
 <template>
-  <button type="submit">LIMPAR</button>
+  <button
+    type="submit"
+    v-text="name"
+    @click="clearFormData">
+  </button>
 </template>
 
 <script>
 export default {
-  name: "MyButton"
+  name: "MyButton",
+  props: {
+    name: {
+      required: true,
+      typeOf: String
+    }
+  },
+
+  methods: {
+    clearFormData() {
+      this.$emit('clear-all-data')
+    }
+  }
 }
 </script>
 

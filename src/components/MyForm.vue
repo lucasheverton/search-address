@@ -43,48 +43,70 @@
       </div>
     </div>
 
-    <MyButton />
+    <div class="wrapper__buttons">
+      <MyButton
+        name="LIMPAR"
+        @clear-all-data="wipeData"
+      />
+       <MyButton
+        name="VER JSON"
+        @click="showDataOnScreen"
+      />
+    </div>
+
+    <MyDataView
+      :displayable="isVisible" 
+      :dataApi="data" 
+    />
   </form>
 </template>
 
 <script>
 import axios from "axios"
+
 import MyButton from "./MyButton.vue"
+import MyDataView from "./MyDataView.vue"
 
 export default {
   name: "MyForm",
   components: {
     MyButton,
+    MyDataView
   },
   
   data() {
     return {
       maximumInputSize: 9,
       inputData: '',
+      data: [],
       fullAddress: {
         city: null,
         address: null,
         neighborhood: null,
         state: null,
         number: null
-      }
+      },
+      isVisible: false
     }
   },
 
   watch: {
     async inputData(value) {
-      this.formatInputCep(value)
+        this.formatInputCep(value)
 
-      if(value.length === this.maximumInputSize) {
-      const response = await axios.get(`https://viacep.com.br/ws/${value}/json/`)
-      const data = response.data
+        if(value.length === this.maximumInputSize) {
+        const response = await axios.get(`https://viacep.com.br/ws/${value}/json/`)
       
-      this.fullAddress = {
-        city: data.localidade,
-        address: data.logradouro,
-        neighborhood: data.bairro,
-        state: data.uf
-      }
+        this.data = response.data
+      
+        const data = response.data
+      
+        this.fullAddress = {
+          city: data.localidade,
+          address: data.logradouro,
+          neighborhood: data.bairro,
+          state: data.uf
+        }
       }
     }
   },
@@ -92,6 +114,22 @@ export default {
   methods: {
     formatInputCep(cep) {
       cep.length === 5 ? this.inputData += '-' : '' 
+    },
+
+    wipeData() {
+      this.inputData = ''
+      this.data = []
+      this.fullAddress = {
+        city: null,
+        address: null,
+        neighborhood: null,
+        state: null,
+        number: null
+      }
+    },
+
+    showDataOnScreen() {
+      this.isVisible = true
     }
   },
 
@@ -139,5 +177,13 @@ export default {
       cursor: no-drop;
     }
   }
+}
+
+.wrapper__buttons {
+  display: flex;
+  flex-direction: row;
+  gap: 0 24px;
+  justify-content: center;
+  flex-wrap: wrap;
 }
 </style>
