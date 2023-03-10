@@ -111,6 +111,10 @@ export default {
     }
   },
 
+  mounted() {
+    return this.fieldFocused()
+  },
+
   methods: {
     formatInputCep(cep) {
       cep.length === 5 ? this.inputData += '-' : '' 
@@ -126,17 +130,19 @@ export default {
         state: null,
         number: null
       }
+
+      this.fieldFocused()
     },
 
     showDataOnScreen() {
       this.isVisible = true
-    }
-  },
+    },
 
-  mounted() {
-    this.$refs.pipe.focus()
-  },
-};
+    fieldFocused() {
+      return this.$refs.pipe.focus()
+    }
+  }
+}
 </script>
 
 <style lang="scss">
