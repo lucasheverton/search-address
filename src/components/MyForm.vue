@@ -118,7 +118,9 @@ export default {
 
   methods: {
     formatInputCep(cep) {
-      cep.length === 5 ? this.inputData += '-' : '' 
+      const numberText = cep.replace(/[^\d]/g, "");
+      const formatedCep = numberText.replace(/^(\d{5})(\d{3})$/, "$1-$2");
+      this.inputData = formatedCep
     },
 
     wipeData() {
