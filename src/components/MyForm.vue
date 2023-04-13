@@ -47,6 +47,7 @@
       <MyButton
         name="LIMPAR"
         @clear-all-data="wipeData"
+        @blastoise="hideDataOnScreen"
       />
        <MyButton
         name="VER JSON"
@@ -132,10 +133,15 @@ export default {
       }
 
       this.fieldFocused()
+      this.hideDataOnScreen()
     },
 
     showDataOnScreen() {
       this.isVisible = true
+    },
+
+    hideDataOnScreen() {
+      this.isVisible = false
     },
 
     fieldFocused() {
