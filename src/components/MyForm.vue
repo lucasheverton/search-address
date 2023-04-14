@@ -2,32 +2,55 @@
   <form @submit.prevent="">
     <div class="wrapper">
       <div class="wrapper__field">
-        <label for="">CEP</label>
-        <input ref="pipe" v-model="inputData" autocomplete="off" :maxlength="maximumInputSize" type="text" />
+        <label for="">CEP *</label>
+        <input 
+          ref="pipe" 
+          v-model="inputData" 
+          autocomplete="off" 
+          type="text"
+          :class="{ 'invalid-field': invalidField }"
+          :maxlength="maximumInputSize" 
+        />
       </div>
 
       <div class="wrapper__field">
         <label for="">Cidade</label>
-        <input type="text" :disabled="fullAddress.city" v-model="fullAddress.city" />
+        <input 
+          v-model="fullAddress.city"
+          type="text" 
+          :disabled="fullAddress.city" 
+        />
       </div>
     </div>
 
     <div class="wrapper">
       <div class="wrapper__field">
         <label for="">Endereço</label>
-        <input type="text" :disabled="fullAddress.address" v-model="fullAddress.address" />
+        <input 
+          v-model="fullAddress.address" 
+          type="text" 
+          :disabled="fullAddress.address" 
+        />
       </div>
     </div>
 
     <div class="wrapper">
       <div class="wrapper__field">
         <label for="">Bairro</label>
-        <input type="text" :disabled="fullAddress.neighborhood" v-model="fullAddress.neighborhood" />
+        <input 
+          v-model="fullAddress.neighborhood" 
+          type="text" 
+          :disabled="fullAddress.neighborhood" 
+        />
       </div>
 
       <div class="wrapper__field">
         <label for="">Estado</label>
-        <input type="text" :disabled="fullAddress.state" v-model="fullAddress.state">
+        <input 
+          v-model="fullAddress.state"
+          type="text" 
+          :disabled="fullAddress.state" 
+        />
       </div>
     </div>
 
@@ -87,7 +110,8 @@ export default {
         state: null,
         number: null
       },
-      isVisible: false
+      isVisible: false,
+      invalidField: false
     }
   },
 
@@ -97,17 +121,22 @@ export default {
 
         if(value.length === this.maximumInputSize) {
         const response = await axios.get(`https://viacep.com.br/ws/${value}/json/`)
+
+        if (!response.data.erro) {
+          this.invalidField = false
+          this.data = response.data
       
-        this.data = response.data
+          const data = response.data
       
-        const data = response.data
-      
-        this.fullAddress = {
-          city: data.localidade,
-          address: data.logradouro,
-          neighborhood: data.bairro,
-          state: data.uf
-        }
+          this.fullAddress = {
+            city: data.localidade,
+            address: data.logradouro,
+            neighborhood: data.bairro,
+            state: data.uf
+          }
+        } else {
+          this.invalidField = true
+        }       
       }
     }
   },
@@ -178,7 +207,6 @@ export default {
     border: 1px solid #eaeaea;
     border-radius: 5px;
     outline: none;
-
     
     &::-webkit-outer-spin-button,
     &::-webkit-inner-spin-button {
@@ -190,6 +218,10 @@ export default {
     &:disabled {
       cursor: no-drop;
     }
+  }
+
+  .invalid-field {
+    border: 1px solid #ff6f6f;
   }
 }
 
